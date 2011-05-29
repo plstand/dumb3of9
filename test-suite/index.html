@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Dumb 3 of 9 Test Suite</title>
+</head>
+<body>
+<script src="../decoder.js"></script>
+<script>
+	var D = Dumb3Of9Decoder;
+	D.loadImage('inkbox.png', function(img) {
+		alert(D.decodeImage(img));
+	});
+</script>
+</body>
+</html>
