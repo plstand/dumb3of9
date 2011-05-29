@@ -1,16 +1,16 @@
 <!doctype html>
 <html>
-<head>
-<meta charset="utf-8">
-<title>Dumb 3 of 9 Test Suite</title>
-</head>
-<body>
-<script src="../decoder.js"></script>
-<script>
-	var D = Dumb3Of9Decoder;
-	D.loadImage('inkbox.png', function(img) {
-		alert(D.decodeImage(img));
-	});
-</script>
-</body>
+	<head>
+		<meta charset="utf-8">
+		<title>Dumb 3 of 9 Test Suite</title>
+	</head>
+	<body>
+		<p>Enter the relative path to a test image:
+			<input id="filename" type="text" size="32">
+			<button id="decodeButton">Decode</button>
+		</p>
+		<textarea id="ta" cols="80" rows="25"></textarea>
+		<script src="../decoder.js"></script>
+		<script src="test-suite.js"></script>
+	</body>
 </html>
