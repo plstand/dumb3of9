@@ -1,7 +1,8 @@
 The test images with filenames beginning with "zxing" are adapted from those
-of the ZXing Project. As part of that project, these images may be covered
-by the Apache License, version 2.0. The contents of the project's AUTHORS
-file and a copy of the Apache License are attached below.
+of the ZXing Project (<http://code.google.com/p/zxing/>). As part of that
+project, these images may be covered by the Apache License, version 2.0.
+The contents of the project's AUTHORS file and a copy of the Apache License
+are attached below.
 
 ----
 
