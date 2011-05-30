@@ -1,3 +1,5 @@
+"use strict";
+
 var Dumb3Of9Decoder = {
 	CODE39_CHARSET : '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%*',
 	CODE39_TABLE : [88, 265, 268, 13, 280, 25, 28, 328, 73, 76,
@@ -65,8 +67,8 @@ var Dumb3Of9Decoder = {
 		return mmts;
 	},
 	decodeFromMmtsAndStart: function(mmts, start) {
-		var length = mmts.length, str = '';
-		for(var x = start; x < length - 9; x += 10) {
+		var length = mmts.length - 9, str = '';
+		for(var x = start; x < length; x += 10) {
 			var charMmts = mmts.slice(x, x + 9).map(function(v, i) {
 				return {i: i, v: v};
 			});
@@ -92,7 +94,8 @@ var Dumb3Of9Decoder = {
 		return null;
 	},
 	decodeFromMmts: function(mmts) {
-		for(var x = 0; x < mmts.length - 9; ++x) {
+		var length = mmts.length - 9;
+		for(var x = 0; x < length; ++x) {
 			var result = this.decodeFromMmtsAndStart(mmts, x);
 			if(result !== null) {
 				return result;
@@ -101,8 +104,9 @@ var Dumb3Of9Decoder = {
 		return null;
 	},
 	measureElementWidthsFromAutomaticRow: function(mat) {
-		var numDenoisingRows = 20, longestMmts = [];
-		for(var y = 0; y < mat.length - numDenoisingRows; ++y) {
+		var numDenoisingRows = 20, longestMmts = [],
+			length = mat.length - numDenoisingRows;
+		for(var y = 0; y < length; ++y) {
 			var curMmts = this.measureElementWidthsFromRow(this.getDenoisedRowFromMatrix(mat, y, numDenoisingRows));
 			if(curMmts.length > longestMmts.length) {
 				longestMmts = curMmts;
@@ -123,5 +127,23 @@ var Dumb3Of9Decoder = {
 			}
 		}
 		return null;
+	},
+	decodeImageAsync: function(img, callback, angle) {
+		var that = this;
+		if(!angle) {
+			angle = 0;
+		}
+		if(angle >= 2 * Math.PI) {
+			callback(null);
+			return;
+		}
+		var result = this.decodeImageFromAngle(img, angle);
+		if(result !== null) {
+			callback(result);
+			return;
+		}
+		setTimeout(function() {
+			that.decodeImageAsync(img, callback, angle + Math.PI / 18);
+		}, 0);
 	}
 };

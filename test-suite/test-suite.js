@@ -1,18 +1,40 @@
+"use strict";
+
 var dec = Dumb3Of9Decoder,
-	byId = document.getElementById.bind(document),
-	ta = byId('ta');
+	ta = byId('ta'),
+	but = byId('decodeButton');
+
+function byId(id) {
+	return document.getElementById(id);
+}
 
 function showLine(str) {
 	ta.value += str;
 	ta.value += '\n';
 }
 
-byId('decodeButton').onclick = function() {
+but.onclick = function() {
+	var timeoutFired = false,
+		timeout = setTimeout(function() {
+			but.disabled = false;
+			but.innerHTML = but.oldHTML;
+			showLine('Image failed to load within 10 seconds.');
+		}, 10000);
+	but.disabled = true;
+	but.oldHTML = but.innerHTML;
+	but.innerHTML = 'Please wait...';
 	dec.loadImage(byId('filename').value, function(img) {
-		var result = dec.decodeImage(img);
-		if(result === null) {
-			result = '?';
+		if(timeoutFired) {
+			return;
 		}
-		showLine(result);
+		clearTimeout(timeout);
+		dec.decodeImageAsync(img, function(result) {
+			if(result === null) {
+				result = '?';
+			}
+			showLine(result);
+			but.disabled = false;
+			but.innerHTML = but.oldHTML;
+		});
 	});
 };
