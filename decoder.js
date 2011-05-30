@@ -18,7 +18,7 @@ var Dumb3Of9Decoder = {
 		var canvas = document.createElement('canvas'),
 			ctx = canvas.getContext('2d'),
 			d = canvas.width = canvas.height = Math.max(width, height) * 2;
-			
+		
 		ctx.save();		
 		ctx.translate(d / 2, d / 2);
 		ctx.rotate(angle);
@@ -104,7 +104,7 @@ var Dumb3Of9Decoder = {
 		return null;
 	},
 	measureElementWidthsFromAutomaticRow: function(mat) {
-		var numDenoisingRows = 20, longestMmts = [],
+		var numDenoisingRows = 5, longestMmts = [],
 			length = mat.length - numDenoisingRows;
 		for(var y = 0; y < length; ++y) {
 			var curMmts = this.measureElementWidthsFromRow(this.getDenoisedRowFromMatrix(mat, y, numDenoisingRows));
