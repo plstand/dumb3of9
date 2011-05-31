@@ -3,13 +3,17 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Dumb 3 of 9 Test Suite</title>
+		<link rel="stylesheet" href="test-suite.css"/>
 	</head>
 	<body>
+		<p id="status">Processing file <span id="statusURL"></span>...</p>
 		<p>Enter the relative path to a test image:
 			<input id="filename" type="text" size="32">
 			<button id="decodeButton">Decode</button>
 		</p>
-		<textarea id="ta" cols="80" rows="25"></textarea>
+		<p>Output:</p>
+		<ul id="output"></ul>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 		<script src="../decoder.js"></script>
 		<script src="test-suite.js"></script>
 	</body>
