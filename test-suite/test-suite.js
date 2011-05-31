@@ -2,49 +2,60 @@
 
 $(function() {
 	var D39 = Dumb3Of9Decoder,
-		output = $('#output');
+		output = $('#output'),
+		status = $('#status'),
+		statusURL = $('#statusURL'),
+		queue = $({});
 		
 	function log(className, code) {
 		$('<li/>').prop('class', className).html(code).appendTo(output);
 	}
 
 	$('#decodeButton').click(function() {
-		function timeoutHandler() {
-			timeoutFired = true;
-			log('error', 'The image failed to load.')
-		}
+		var url = $('#filename').val().replace(/^\s+|\s+$/g, '');
 		
-		var url = $('#filename').val();
-		
-		if(/^\s*$/.test(url)) {
+		if(!url) {
 			log('error', 'You must fill in the filename field.');
 			return;
 		}
 		
-		if(/^[^\/]*:/.test(url)) {
+		if(/^[^\/]*:|^\/\//.test(url)) {
 			log('error', 'Because of browser security limitations, ' +
 				'this test suite cannot retrieve absolute URLs.');
 			return;
 		}
 		
 		var timeoutFired = false,
-			timeout = setTimeout(timeoutHandler, 10000),
-			startTime = $.now();
+			timeout = setTimeout(function() {
+				timeoutFired = true;
+				log('error', 'An image failed to load.');
+				status.hide();
+				queue.dequeue();
+			}, 10000);
 		
-		D39.loadImage($('#filename').val(), function(img) {
+		D39.loadImage(url, function(img) {
 			if(timeoutFired) {
 				return;
 			}
 			clearTimeout(timeout);
-			D39.decodeImageAsync(img, function(result) {
-				var endTime = $.now();
-				if(result === null) {
-					log('error', 'No barcode recognized (took ' +
-						(endTime - startTime) + ' ms)');
-				} else {
-					log('ok', '<code>' + result + '</code> (took ' +
-						(endTime - startTime) + ' ms)');
-				}
+			queue.queue(function() {
+				var startTime = $.now();
+				statusURL.text(url);
+				status.show();
+				D39.decodeImageAsync(img, function(result) {
+					var endTime = $.now();
+					if(result === null) {
+						log('error', 'No barcode recognized (took ' +
+							(endTime - startTime) + ' ms)');
+					} else {
+						log('ok', '<code>' + result + '</code> (took ' +
+							(endTime - startTime) + ' ms)');
+					}
+					if(!queue.queue().length) {
+						status.hide();
+					}
+					queue.dequeue();
+				});
 			});
 		});
 	});

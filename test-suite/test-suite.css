@@ -1,3 +1,15 @@
+body {
+	background-color: #fff;
+	color: #000;
+}
+
+#status {
+	background-color: #ff9;
+	border: 1px solid;
+	display: none;
+	padding: 0.5em;
+}
+
 .error {
 	color: #600;
 }
