@@ -11,8 +11,9 @@ $(function() {
 		$('<li/>').prop('class', className).html(code).appendTo(output);
 	}
 
-	$('#decodeButton').click(function() {
-		var url = $('#filename').val().replace(/^\s+|\s+$/g, '');
+	function queueTestCase(url, expected) {
+	
+		url = $.trim(url);
 		
 		if(!url) {
 			log('error', 'You must fill in the filename field.');
@@ -44,18 +45,49 @@ $(function() {
 				status.show();
 				D39.decodeImageAsync(img, function(result) {
 					var endTime = $.now();
-					if(result === null) {
-						log('error', 'No barcode recognized (took ' +
-							(endTime - startTime) + ' ms)');
+					if(typeof expected != 'undefined') {
+						if(result === null) {
+							result = '?';
+						}
+						if(result != expected) {
+							log('error', url + ': expected <code>' + expected +
+								'</code>, got <code>' + result + '</code> (took ' +
+								(endTime - startTime) + ' ms)');
+						} else {
+							log('ok', url + ': got correct output <code>' +
+								result + '</code> (took ' +
+								(endTime - startTime) + ' ms)');
+						}
 					} else {
-						log('ok', '<code>' + result + '</code> (took ' +
-							(endTime - startTime) + ' ms)');
+						if(result === null) {
+							log('error', 'No barcode recognized (took ' +
+								(endTime - startTime) + ' ms)');
+						} else {
+							log('ok', '<code>' + result + '</code> (took ' +
+								(endTime - startTime) + ' ms)');
+						}
 					}
 					if(!queue.queue().length) {
 						status.hide();
 					}
 					queue.dequeue();
 				});
+			});
+		});
+	}
+	
+	$('#decodeButton').click(function() {
+		queueTestCase($('#filename').val());
+	});
+	
+	$('#autoTestButton').click(function() {
+		$.get('list.txt', function(data) {
+			$.each(data.replace(/\r/g, '').split('\n'), function(lineNo, line) {
+				var splitLine = line.split('\t');
+				if(splitLine.length < 2) {
+					return;
+				}
+				queueTestCase(splitLine[0], splitLine[1]);
 			});
 		});
 	});
