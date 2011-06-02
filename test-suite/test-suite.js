@@ -39,16 +39,14 @@ $(function() {
 				return;
 			}
 			clearTimeout(timeout);
-			queue.queue(function() {
+			queue.queue(function(next) {
 				var startTime = $.now();
 				statusURL.text(url);
 				status.show();
 				D39.decodeImageAsync(img, function(result) {
 					var endTime = $.now();
-					if(typeof expected != 'undefined') {
-						if(result === null) {
-							result = '?';
-						}
+					if(expected) {
+						result = result || '?';
 						if(result != expected) {
 							log('error', url + ': expected <code>' + expected +
 								'</code>, got <code>' + result + '</code> (took ' +
@@ -59,7 +57,7 @@ $(function() {
 								(endTime - startTime) + ' ms)');
 						}
 					} else {
-						if(result === null) {
+						if(!result) {
 							log('error', 'No barcode recognized (took ' +
 								(endTime - startTime) + ' ms)');
 						} else {
@@ -67,10 +65,8 @@ $(function() {
 								(endTime - startTime) + ' ms)');
 						}
 					}
-					if(!queue.queue().length) {
-						status.hide();
-					}
-					queue.dequeue();
+					status.hide();
+					next();
 				});
 			});
 		});

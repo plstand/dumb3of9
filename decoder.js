@@ -85,7 +85,7 @@ var Dumb3Of9Decoder = {
 			} else if(code == 43 && x != start) {
 				return str;
 			} else if(code != 43) {
-				if(x == start) {
+				if(x - start < 2) {
 					return null;
 				}
 				str += this.CODE39_CHARSET[code];
@@ -97,7 +97,7 @@ var Dumb3Of9Decoder = {
 		var length = mmts.length - 9;
 		for(var x = 0; x < length; ++x) {
 			var result = this.decodeFromMmtsAndStart(mmts, x);
-			if(result !== null) {
+			if(result) {
 				return result;
 			}
 		}
@@ -122,7 +122,7 @@ var Dumb3Of9Decoder = {
 	decodeImage: function(img) {
 		for(var angle = 0; angle < 2 * Math.PI; angle += Math.PI / 18) {
 			var result = this.decodeImageFromAngle(img, angle);
-			if(result !== null) {
+			if(result) {
 				return result;
 			}
 		}
@@ -138,7 +138,7 @@ var Dumb3Of9Decoder = {
 			return;
 		}
 		var result = this.decodeImageFromAngle(img, angle);
-		if(result !== null) {
+		if(result) {
 			callback(result);
 			return;
 		}
